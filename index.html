@@ -3,108 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Strain Calculator with Camera Input</title>
+    <title>Value Calculator</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        #camera {
+            width: 100%;
             max-width: 600px;
             margin: auto;
-            padding: 20px;
-        }
-        h1 {
-            text-align: center;
         }
         video, canvas {
             width: 100%;
-            display: block;
-            margin-bottom: 10px;
-        }
-        button {
-            display: block;
-            width: 100%;
-            padding: 10px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        input {
-            width: calc(100% - 20px);
-            margin: 10px 0;
-            padding: 10px;
-            font-size: 16px;
-        }
-        #result {
-            text-align: center;
-            font-size: 20px;
-            margin-top: 20px;
+            max-width: 600px;
+            height: auto;
         }
     </style>
 </head>
 <body>
-    <h1>Strain Calculator with Camera Input</h1>
-    <video id="video" autoplay></video>
+    <h1>Strain Calculator</h1>
+    <div id="camera">
+        <video id="video" autoplay></video>
+        <br>
+        <button id="snap">Capture</button>
+    </div>
     <canvas id="canvas" style="display:none;"></canvas>
-    <button id="capture">Capture and Process</button>
-
-    <input type="text" id="apical1" placeholder="Apical 1">
-    <input type="text" id="apical2" placeholder="Apical 2">
-    <input type="text" id="apical3" placeholder="Apical 3">
-    <input type="text" id="apical4" placeholder="Apical 4">
-
-    <button onclick="calculate()">Calculate</button>
-    <div id="result"></div>
-
-    <script src="https://cdn.rawgit.com/naptha/tesseract.js/1.0.10/dist/tesseract.js"></script>
-    <script>
-        const video = document.getElementById('video');
-        const canvas = document.getElementById('canvas');
-        const captureButton = document.getElementById('capture');
-
-        // Access the camera
-        navigator.mediaDevices.getUserMedia({ video: true })
-            .then(stream => {
-                video.srcObject = stream;
-            })
-            .catch(err => {
-                console.error("Error accessing the camera: " + err);
-            });
-
-        // Capture the image and process it
-        captureButton.addEventListener('click', () => {
-            const context = canvas.getContext('2d');
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            const dataUrl = canvas.toDataURL('image/png');
-
-            // Process the captured image with Tesseract
-            Tesseract.recognize(
-                dataUrl,
-                'eng',
-                {
-                    logger: m => console.log(m)
-                }
-            ).then(({ data: { text } }) => {
-                console.log(text);
-                // Here you need to process the text and populate input fields
-                // For example, extract numbers and assign them to specific inputs
-                const values = text.match(/[\d\.\,]+/g);
-                if (values) {
-                    document.getElementById('apical1').value = values[0] || '';
-                    document.getElementById('apical2').value = values[1] || '';
-                    document.getElementById('apical3').value = values[2] || '';
-                    document.getElementById('apical4').value = values[3] || '';
-                }
-            });
-        });
-
-        function calculate() {
-            const apical1 = parseFloat(document.getElementById('apical1').value) || 0;
-            const apical2 = parseFloat(document.getElementById('apical2').value) || 0;
-            const apical3 = parseFloat(document.getElementById('apical3').value) || 0;
-            const apical4 = parseFloat(document.getElementById('apical4').value) || 0;
-            const result = (apical1 + apical2 + apical3 + apical4) / 4;
-            document.getElementById('result').innerText = `Result: ${result.toFixed(2)}`;
-        }
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
